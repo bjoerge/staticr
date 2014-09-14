@@ -2,15 +2,16 @@
 var ent = require("ent");
 
 function safeStr(str) {
-  return ent.encode(str);
+  return ent.encode(JSON.stringify(str));
 }
 
 module.exports = function serveBundles(bundles, options) {
   options = options || {};
   return function serve(req, res, next) {
+    console.log(req.originalUrl)
     var factory = bundles.hasOwnProperty(req.path) && bundles[req.path];
     if (!factory) {
-      handleError(new Error("Bundle for request path " + JSON.stringify(safeStr(req.path)) + " not found"));
+      handleError(new Error("Bundle for request path " + safeStr(req.path) + " not found"));
     }
 
     try {
@@ -38,9 +39,9 @@ module.exports = function serveBundles(bundles, options) {
     str += "/*\n";
     str += JSON.stringify(safeStr(err.message));
     str += "*/\n";
-    str += "var e = new Error(" + JSON.stringify(safeStr(err.message)) + ");";
+    str += "var e = new Error(" + safeStr(err.message) + ");";
     if (err.stack) {
-      str += "\ne.stack=" + JSON.stringify(safeStr(err.stack)) + ";";
+      str += "\ne.stack=" + safeStr(err.stack) + ";";
     }
     str += "\nthrow e;";
     return str;
