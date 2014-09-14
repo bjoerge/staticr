@@ -1,21 +1,14 @@
 
-var ent = require("ent");
-
-function safeStr(str) {
-  return ent.encode(JSON.stringify(str));
-}
-
 module.exports = function serveBundles(bundles, options) {
   options = options || {};
   return function serve(req, res, next) {
-    console.log(req.originalUrl)
+    res.type('application/javascript');
     var factory = bundles.hasOwnProperty(req.path) && bundles[req.path];
     if (!factory) {
-      handleError(new Error("Bundle for request path " + safeStr(req.path) + " not found"));
+      handleError(new Error("Bundle for request path " + JSON.stringify(req.path) + " not found"));
     }
 
     try {
-      res.type('application/javascript');
       factory()
         .on('error', handleError)
         .pipe(res);
@@ -37,11 +30,11 @@ module.exports = function serveBundles(bundles, options) {
   function makeThrowStatementFromError(err) {
     var str = "";
     str += "/*\n";
-    str += JSON.stringify(safeStr(err.message));
-    str += "*/\n";
-    str += "var e = new Error(" + safeStr(err.message) + ");";
+    str += err.stack;
+    str += "\n*/\n";
+    str += "var e = new Error(" + JSON.stringify(err.message) + ");";
     if (err.stack) {
-      str += "\ne.stack=" + safeStr(err.stack) + ";";
+      str += "\ne.stack=" + JSON.stringify(err.stack) + ";";
     }
     str += "\nthrow e;";
     return str;
