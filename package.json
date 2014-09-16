@@ -4,7 +4,7 @@
   "description": "Build predefined routes to static files for faster serving",
   "main": "./build.js",
   "bin": {
-    "build-static": "./bin/build-static"
+    "build-static": "./bin/build-static.js"
   },
   "directories": {
     "example": "examples"
