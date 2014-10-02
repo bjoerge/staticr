@@ -63,7 +63,7 @@ var express = require("express");
 
 if (process.env.NODE_ENV === 'development') {
   var browserify = require("build-static/serve-browserify");
-  app.get("/js", browserify(require("./bundles.js")));
+  app.use("/js", browserify(require("./bundles.js")));
 }
 
 // Optionally serve static files through express 
