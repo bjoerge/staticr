@@ -1,4 +1,4 @@
-var async = require("async");
+
 var mkdirp = require("mkdirp");
 var path = require("path");
 var fs = require("fs");
