@@ -7,6 +7,8 @@ This module is intended for a developer workflow where:
 - A set of predefined routes (javascript bundles, html files) are generated and served dynamically during development
 - These routes are built and written to static files on disk at deploy time (i.e. to be served by nginx)
 
+See the [example](https://github.com/bjoerge/build-static/tree/master/example) directory for a complete, working example project.
+
 ## Usage
 
 ### Define the routes 
