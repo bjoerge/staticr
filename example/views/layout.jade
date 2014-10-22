@@ -1,0 +1,11 @@
+doctype html
+html(lang="en")
+  head
+    title Build static
+    script(type='text/javascript' src="/js/bundle.js" async defer)
+    if env == 'development'
+      script(type='text/javascript' src="/js/dev.js" async defer)
+    link(rel="stylesheet" type='text/javascript' href="/css/main.css")
+  body
+    h1 Build static #{env}
+    block content
