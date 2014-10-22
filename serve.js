@@ -17,8 +17,6 @@ function staticServer(type) {
       }
     });
     return function serve(req, res, next) {
-      res.type(type);
-
       var found = null;
       routes.some(function(route) {
         if (req.path == route.route) {
@@ -30,6 +28,7 @@ function staticServer(type) {
         return next();
       }
 
+      res.type(type);
       try {
         found.factory()
           .on('error', next)
