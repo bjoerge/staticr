@@ -9,16 +9,12 @@ var xtend = require("xtend");
 var clc = require("cli-color");
 var minimist = require("minimist");
 
-var argv = minimist(process.argv.slice(2), {
-  alias: { r: 'route' }
-});
+var argv = minimist(process.argv.slice(2));
 
 if (argv._.length < 2) {
   console.log("Usage: staticr <target dir> <route files ...>")
-  //process.exit(1);
+  process.exit(0);
 }
-
-console.log(argv)
 
 var targetDir = argv._[0];
 var routes = xtend.apply(xtend, argv._.slice(1).map(function(file) {
