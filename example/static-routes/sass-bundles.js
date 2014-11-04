@@ -22,7 +22,7 @@ var routes = module.exports = {
   "/css/main.css": function() {
     return streamify(function(end, fail) {
       sass.render({
-        file: require.resolve("./stylesheets/main.scss"),
+        file: require.resolve("../stylesheets/main.scss"),
         success: end,
         error: fail
       });
