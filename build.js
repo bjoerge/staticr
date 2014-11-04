@@ -46,11 +46,12 @@ function atomicRename() {
 }
 
 function waitForAll() {
-  var data = [];
+  var chunks = [];
   return through.obj(function(chunk, enc, cb) {
-    cb(null, chunk);
+    chunks.push(chunk);
+    cb();
   }, function() {
-    data.forEach(this.push.bind(this));
+    chunks.forEach(this.push.bind(this));
   })
 }
 
