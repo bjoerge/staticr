@@ -1,10 +1,10 @@
 {
-  "name": "build-static",
-  "version": "0.0.8",
+  "name": "staticr",
+  "version": "1.0.0",
   "description": "Build predefined routes to static files for faster serving",
   "main": "./build.js",
   "bin": {
-    "build-static": "./bin/build-static.js"
+    "staticr": "./bin/staticr.js"
   },
   "directories": {
     "example": "examples"

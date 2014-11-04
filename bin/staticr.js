@@ -11,7 +11,7 @@ var clc = require("cli-color");
 var argv = require('minimist')(process.argv.slice(2));
 
 if (argv._.length < 2) {
-  console.log("Usage: build-static <target dir> <route files ...>")
+  console.log("Usage: staticr <target dir> <route files ...>")
   process.exit(1);
 }
 

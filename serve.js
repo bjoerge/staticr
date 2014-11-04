@@ -1,8 +1,7 @@
 var path = require("path");
 
 module.exports             = staticServer;
-module.exports.javascript  = staticServer("application/javascript");
-module.exports.js          = module.exports.javascript;
+module.exports.js          = staticServer("application/javascript");
 module.exports.html        = staticServer("text/html");
 module.exports.css         = staticServer("text/css");
 module.exports.text        = staticServer("text/plain");

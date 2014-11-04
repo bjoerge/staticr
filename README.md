@@ -1,13 +1,14 @@
-# build-static
+# staticr
 
-build-static allows you to define a set of routes that can be either served dynamically (e.g. in development) or built to static files (e.g. in production)
+staticr allows you to define a set of routes that can be either served dynamically by express (e.g. in development) or 
+built to static files (e.g. in production)
 
 This module is intended for a developer workflow where:
 
 - A set of predefined routes (javascript bundles, html files) are generated and served dynamically during development
 - These routes are built and written to static files on disk at deploy time (i.e. to be served by nginx)
 
-See the [example](https://github.com/bjoerge/build-static/tree/master/example) directory for a complete, working example project.
+See the [example](https://github.com/bjoerge/staticr/tree/master/example) directory for a complete, working example project.
 
 ## Usage
 
@@ -91,14 +92,14 @@ if (process.env.NODE_ENV === 'development') {
 
 ## Compile routes to target dir
 
-### Usage
+### Command line
 ```
-build-static <target dir> <route files ...>
+staticr <target dir> <route files ...>
 ```
 
 Routes will be generated once and written to target directory. This is what you want to do when deploying your app.
 
 ### Example
 ```sh
-NODE_ENV=production ./node_modules/.bin/build-static public sass-bundles.js browserify-bundles.js html-routes.js
+NODE_ENV=production ./node_modules/.bin/staticr public sass-bundles.js browserify-bundles.js html-routes.js
 ```
