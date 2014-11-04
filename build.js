@@ -4,7 +4,8 @@ var path = require("path");
 var fs = require("fs");
 var es = require("event-stream");
 var through = require("through2");
-var concat = require("concat-stream");
+
+var TEMPFILE_SUFFIX = '.staticr-tmp';
 
 module.exports = build;
 
@@ -17,39 +18,57 @@ function build(routes, targetDir) {
     .pipe(atomicRename())
 }
 
+function prepareRoutes(routes, targetDir) {
+  return Object.keys(routes).map(function(route) {
+    var target = path.join(targetDir, resolveTarget(route));
+    var tmpfile = target + TEMPFILE_SUFFIX;
+    return {
+      route: path.join('/', route),
+      target: target,
+      tmpfile: tmpfile,
+      factory: routes[route]
+    }
+  });
+}
+
 function ensurePaths() {
   return through.obj(function(route, enc, cb) {
     mkdirp(path.dirname(route.target), function() {
-      cb(null, route);
-    });
-  })
+      this.push(route);
+      cb();
+    }.bind(this));
+  });
 }
 
 function writeToTempfile() {
   return through.obj(function(route, enc, cb) {
     route.factory()
       .pipe(fs.createWriteStream(route.tmpfile))
-      .on('close', this.push.bind(this, route))
       .on('error', this.emit.bind(this, 'error'))
+      .on('close', this.push.bind(this, route))
       .on('close', cb);
   })
 }
 
 function atomicRename() {
   return through.obj(function(routes, enc, cb) {
+    var self = this;
     var pending = routes.length;
     routes.forEach(function(route) {
       fs.rename(route.tmpfile, route.target, function (err) {
+        pending--;
         if (err) {
-          return this.emit('error')
+          return self.emit('error')
         }
-        this.push(route);
-        if (--pending === 0) {
+        self.push(route);
+        if (pending === 0) {
           cb();
         }
-      }.bind(this));
-    }, this);
-  })
+      });
+    });
+  }, function() {
+    this.emit('end');
+  });
 }
 
 function waitForAll() {
@@ -59,19 +78,7 @@ function waitForAll() {
     cb();
   }, function() {
     this.push(all);
-  });
-}
-
-function prepareRoutes(routes, targetDir) {
-  return Object.keys(routes).map(function(route) {
-    var target = path.join(targetDir, resolveTarget(route));
-    var tmpfile = target + '.tmp';
-    return {
-      route: path.join('/', route),
-      target: target,
-      tmpfile: tmpfile,
-      factory: routes[route]
-    }
+    this.push(null);
   });
 }
 
