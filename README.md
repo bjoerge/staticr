@@ -1,4 +1,4 @@
-# staticr [![Build Status](https://secure.travis-ci.org/bjoerge/build-static.png)](http://travis-ci.org/bjoerge/build-static)
+# staticr [![Build Status](https://secure.travis-ci.org/bjoerge/staticr.png)](http://travis-ci.org/bjoerge/staticr)
 
 staticr allows you to define a set of routes that can be either served dynamically by express (e.g. in development) or 
 built to static files (e.g. in production)
