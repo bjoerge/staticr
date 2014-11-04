@@ -26,7 +26,12 @@
     "jade": "^1.7.0",
     "node-sass": "^1.0.1",
     "string-to-stream": "^1.0.0",
+    "tap": "^0.4.13",
     "uglify-stream": "^1.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bjoerge/build-static.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
