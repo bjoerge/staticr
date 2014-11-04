@@ -7,12 +7,20 @@ var through = require("through2");
 
 module.exports = build;
 
+function build(routes, targetDir) {
+  return es
+    .readArray(prepareRoutes(routes, targetDir))
+    .pipe(ensurePaths())
+    .pipe(writeToTempfile())
+    .pipe(waitForAll())
+    .pipe(atomicRename())
+}
+
 function ensurePaths() {
   return through.obj(function(route, enc, cb) {
     mkdirp(path.dirname(route.target), function() {
-      this.push(route);
-      cb();
-    }.bind(this));
+      cb(null, route);
+    });
   })
 }
 
@@ -32,8 +40,7 @@ function atomicRename() {
       if (err) {
         return this.emit('error')
       }
-      this.push(route);
-      cb();
+      cb(null, route);
     }.bind(this));
   })
 }
@@ -41,20 +48,10 @@ function atomicRename() {
 function waitForAll() {
   var data = [];
   return through.obj(function(chunk, enc, cb) {
-    data.push(chunk);
-    cb();
+    cb(null, chunk);
   }, function() {
     data.forEach(this.push.bind(this));
   })
-}
-
-function build(routes, targetDir) {
-  return es
-    .readArray(prepareRoutes(routes, targetDir))
-    .pipe(ensurePaths())
-    .pipe(writeToTempfile())
-    .pipe(waitForAll())
-    .pipe(atomicRename())
 }
 
 function prepareRoutes(routes, targetDir) {
