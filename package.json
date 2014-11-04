@@ -20,13 +20,16 @@
   },
   "devDependencies": {
     "browserify": "^5.11.2",
+    "concat-stream": "^1.4.6",
     "d3": "^3.4.11",
     "envify": "^3.0.0",
     "express": "^4.9.0",
     "jade": "^1.7.0",
     "node-sass": "^1.0.1",
+    "proxyquire": "^1.0.1",
     "string-to-stream": "^1.0.0",
     "tap": "^0.4.13",
+    "tap-colorize": "^1.2.0",
     "uglify-stream": "^1.1.0"
   },
   "repository": {
@@ -34,7 +37,7 @@
     "url": "http://github.com/bjoerge/build-static.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap test | tap-colorize"
   },
   "author": "Bjørge Næss <bjoerge@gmail.com>",
   "license": "MIT"
