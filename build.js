@@ -4,6 +4,7 @@ var path = require("path");
 var fs = require("fs");
 var es = require("event-stream");
 var through = require("through2");
+var concat = require("concat-stream");
 
 module.exports = build;
 
@@ -35,24 +36,30 @@ function writeToTempfile() {
 }
 
 function atomicRename() {
-  return through.obj(function(route, enc, cb) {
-    fs.rename(route.tmpfile, route.target, function (err) {
-      if (err) {
-        return this.emit('error')
-      }
-      cb(null, route);
-    }.bind(this));
+  return through.obj(function(routes, enc, cb) {
+    var pending = routes.length;
+    routes.forEach(function(route) {
+      fs.rename(route.tmpfile, route.target, function (err) {
+        if (err) {
+          return this.emit('error')
+        }
+        this.push(route);
+        if (--pending === 0) {
+          cb();
+        }
+      }.bind(this));
+    }, this);
   })
 }
 
 function waitForAll() {
-  var chunks = [];
+  var all = [];
   return through.obj(function(chunk, enc, cb) {
-    chunks.push(chunk);
+    all.push(chunk);
     cb();
   }, function() {
-    chunks.forEach(this.push.bind(this));
-  })
+    this.push(all);
+  });
 }
 
 function prepareRoutes(routes, targetDir) {
