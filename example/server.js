@@ -20,6 +20,6 @@ app.listen(3000, function(err) {
     console.log("Serving bundles at http://localhost:3000")
   }
   else {
-    console.log("No bundles served. NODE_ENV != development.")
+    console.log("No bundles served. Start with NODE_ENV=development if you'd like to serve bundles.")
   }
 });

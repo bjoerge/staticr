@@ -4,6 +4,7 @@ var path = require("path");
 var fs = require("fs");
 var es = require("event-stream");
 var through = require("through2");
+var str = require("string-to-stream");
 
 var TEMPFILE_SUFFIX = '.staticr-tmp';
 
@@ -42,11 +43,47 @@ function ensurePaths() {
 
 function writeToTempfile() {
   return through.obj(function(route, enc, cb) {
-    route.factory()
-      .pipe(fs.createWriteStream(route.tmpfile))
-      .on('error', this.emit.bind(this, 'error'))
-      .on('close', this.push.bind(this, route))
-      .on('close', cb);
+
+    function getValueFromFactory(cb) {
+      if (route.factory.length == 1) {
+        // Expects callback
+        try {
+          return route.factory(cb);
+        } catch(e) {
+          return cb(e);
+        }
+      }
+      var retval;
+      try {
+        retval = route.factory();
+      }
+      catch(e) {
+        return cb(e);
+      }
+      if (retval === undefined) {
+        return cb(new Error("The factory function for '"+route.path+"' must either take a callback or return a value"));
+      }
+      if (typeof retval.then == 'function') {
+        // Assume promise
+        retval.then(cb.bind(null, null));
+        retval.catch && retval.catch && retval.catch(cb);
+        return;
+      }
+      // All other values (streams, buffers, strings, etc.)
+      cb(null, retval);
+    }
+
+    getValueFromFactory(function(err, retval) {
+      var stream = typeof retval === 'string' ? str(retval) : retval;
+      if (typeof stream.pipe != 'function') {
+        return cb(new Error('Expected a string or a readable stream to be returned from route build function for '+route.path));
+      }
+      stream
+        .pipe(fs.createWriteStream(route.tmpfile))
+        .on('error', this.emit.bind(this, 'error'))
+        .on('close', this.push.bind(this, route))
+        .on('close', cb);
+    }.bind(this));
   })
 }
 
