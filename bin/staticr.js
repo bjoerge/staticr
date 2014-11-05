@@ -9,19 +9,48 @@ var xtend = require("xtend");
 var clc = require("cli-color");
 var minimist = require("minimist");
 
-var argv = minimist(process.argv.slice(2));
+var argv = minimist(process.argv.slice(2), {
+  alias: {
+    h: 'help',
+    r: 'route',
+    e: 'exclude'
+  }
+});
 
-if (argv._.length < 2) {
-  console.log("Usage: staticr <target dir> <route files ...>")
-  process.exit(0);
+function showHelp() {
+  process.stdout.write(fs.readFileSync(__dirname+"/usage.txt"));
+}
+
+if (argv.help || argv._.length < 2) {
+  showHelp();
+  process.exit(1)
 }
 
 var targetDir = argv._[0];
-var routes = xtend.apply(xtend, argv._.slice(1).map(function(file) {
+var routeFiles = argv._.slice(1);
+
+var include = [].concat(argv.route || []);
+var exclude = [].concat(argv.exclude || []);
+
+if (include.length > 0 && exclude.length > 0 ) {
+  console.log("Error: The --route and --exclude options are mutually exclusive");
+  process.exit(1);
+}
+
+var routes = xtend.apply(xtend, routeFiles.map(function(file) {
   return require(path.join(process.cwd(), file))
 }));
 
-build(routes, targetDir)
+var filtered = Object.keys(routes).reduce(function(filtered, route) {
+  if ((include.length == 0 && exclude.length == 0)
+      || (include.length > 0 && include.indexOf(route) > -1)
+      || (exclude.length >   0 && exclude.indexOf(route) === -1)) {
+    filtered[route] = routes[route];
+  }
+  return filtered;
+}, {}); 
+
+build(filtered, targetDir)
   .pipe(stat())
   .pipe(prettify())
   .pipe(process.stdout)
