@@ -1,4 +1,5 @@
 var path = require("path");
+var getFactoryStream = require("./lib/getFactoryStream");
 
 module.exports             = staticServer;
 module.exports.js          = staticServer("application/javascript");
@@ -27,15 +28,17 @@ function staticServer(type) {
         return next();
       }
 
-      res.type(type);
-      try {
-        found.factory()
+      getFactoryStream(found, function(err, stream) {
+
+        res.type(type);
+
+        if (err) {
+          return next(err);
+        }
+        stream
           .on('error', next)
           .pipe(res);
-      }
-      catch (e) {
-        next(e);
-      }
+      });
     }
   };
-};
+}
