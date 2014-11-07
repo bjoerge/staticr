@@ -67,7 +67,7 @@ var routes = {
 
 If the function takes a callback, this callback must be called with either a string or a readable stream whenever the output is available.
 
-For example, if the above route was async, you could do:
+For example, if you had to do something async in order to get the content for the above route, you could instead do:
 
 ```js
 var routes = {
@@ -83,6 +83,8 @@ var routes = {
 }
 ```
 
+Note: Any value returned from a route function that expects arguments are ignored silently.
+
 ### Command line API
 
 ```
@@ -97,7 +99,7 @@ Usage: staticr [options] <target dir> <route files ...>
                           defined routes will be included.
 
              --stdout, -s Pipe a route to stdout instead of writing to a target folder.
-                          This option only works for single routes specified with the --route parameter.
+                          This option only works for a single route specified with the --route parameter.
 ```
 
 ### Example: Development vs. production
@@ -143,10 +145,10 @@ var jade = require('jade');
 // This bundle will be minified in production.
 var routes = module.exports = {
   "/": function() {
-    return jade.renderFile("./views/index.jade", {env: process.env.NODE_ENV});
+    return jade.renderFile("./views/index.jade", {title: "Main"});
   },
   "/about": function() {
-    return jade.renderFile("./views/about.jade", {env: process.env.NODE_ENV});
+    return jade.renderFile("./views/about.jade", {title: "About"});
   }
 };
 
