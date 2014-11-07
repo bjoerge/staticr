@@ -36,7 +36,7 @@ if (!argv.stdout && argv._.length < 2) {
 }
 
 var targetDir = argv._[0];
-var routeFiles = argv.stdout ? argv._.slice(0) : argv.slice(1);
+var routeFiles = argv.stdout ? argv._.slice(0) : argv._.slice(1);
 
 var include = [].concat(argv.route || []).map(normalizePath);
 var exclude = [].concat(argv.exclude || []).map(normalizePath);
