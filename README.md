@@ -40,7 +40,7 @@ The content of the stream returned from the static route function above is now w
 - It allows you to operate with a flexible set of static routes that can be used in different contexts and environments. 
 You define how the static resource should be generated depending on environment in one central place.
 
-- You don't have to rely on another layer of indirection between your app the tools that actually compiles static resources.
+- You don't have to rely on another layer of indirection between your app and the tools that actually compiles the static resources.
   No more wrappers like `grunt-*`, `gulp-*` or `*-middleware` - you just use the `browserify`, `node-sass`, `less`
   packages and their apis directly.
 
