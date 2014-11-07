@@ -1,6 +1,6 @@
 {
   "name": "staticr",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Build predefined routes to static files for faster serving",
   "main": "./build.js",
   "bin": {
