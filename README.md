@@ -1,7 +1,6 @@
 # staticr [![Build Status](https://secure.travis-ci.org/bjoerge/staticr.png)](http://travis-ci.org/bjoerge/staticr)
 
-staticr allows you to define a set of routes that can be either served dynamically by express (e.g. during development) or 
-built to static files (e.g. before starting in production)
+staticr allows you to define a set of routes that can be either served dynamically by express (e.g. during development) or built to static files on disc (e.g. before starting in production)
 
 See the [example](https://github.com/bjoerge/staticr/tree/master/example) directory for a complete, working example project.
 
