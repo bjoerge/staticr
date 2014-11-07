@@ -1,5 +1,6 @@
 var path = require("path");
 var getFactoryStream = require("./lib/getFactoryStream");
+var createRoutes = require("./lib/createRoutes");
 
 module.exports             = staticServer;
 module.exports.js          = staticServer("application/javascript");
@@ -10,16 +11,13 @@ module.exports.json        = staticServer("application/json");
 
 function staticServer(type) {
   return function serve(routes) {
-    routes = Object.keys(routes).map(function(route) {
-      return {
-        route: path.join('/', route),
-        factory: routes[route]
-      }
-    });
+
+    routes = createRoutes(routes);
+
     return function serve(req, res, next) {
       var found = null;
       routes.some(function(route) {
-        if (req.path == route.route) {
+        if (req.path == route.path) {
           return found = route;
         }
       });

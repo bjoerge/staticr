@@ -8,12 +8,16 @@ var fs = require("fs");
 var xtend = require("xtend");
 var clc = require("cli-color");
 var minimist = require("minimist");
+var getFactoryStream = require("../lib/getFactoryStream");
+var createRoutes = require("../lib/createRoutes");
+var normalizePath = require("../lib/normalizePath");
 
 var argv = minimist(process.argv.slice(2), {
   alias: {
     h: 'help',
     r: 'route',
-    e: 'exclude'
+    e: 'exclude',
+    s: 'stdout'
   }
 });
 
@@ -21,42 +25,69 @@ function showHelp() {
   process.stdout.write(fs.readFileSync(__dirname+"/usage.txt"));
 }
 
-if (argv.help || argv._.length < 2) {
+if (argv.help) {
   showHelp();
+  process.exit(0)
+}
+
+if (!argv.stdout && argv._.length < 2) {
+  console.log("Error: Please specify either --stdout or a target folder. See staticr --help for more information.");
   process.exit(1)
 }
 
 var targetDir = argv._[0];
-var routeFiles = argv._.slice(1);
+var routeFiles = argv.stdout ? argv._.slice(0) : argv.slice(1);
 
-var include = [].concat(argv.route || []);
-var exclude = [].concat(argv.exclude || []);
+var include = [].concat(argv.route || []).map(normalizePath);
+var exclude = [].concat(argv.exclude || []).map(normalizePath);
 
 if (include.length > 0 && exclude.length > 0 ) {
-  console.log("Error: The --route and --exclude options are mutually exclusive");
+  console.log("Error: The --route and --exclude options are mutually exclusive.");
   process.exit(1);
 }
 
-var routes = xtend.apply(xtend, routeFiles.map(function(file) {
+var routesMap = xtend.apply(xtend, routeFiles.map(function(file) {
   return require(path.join(process.cwd(), file))
 }));
 
-var filtered = Object.keys(routes).reduce(function(filtered, route) {
-  if ((include.length == 0 && exclude.length == 0)
-      || (include.length > 0 && include.indexOf(route) > -1)
-      || (exclude.length >   0 && exclude.indexOf(route) === -1)) {
-    filtered[route] = routes[route];
-  }
-  return filtered;
-}, {}); 
+var routes = createRoutes(routesMap);
 
-build(filtered, targetDir)
-  .pipe(stat())
-  .pipe(prettify())
-  .pipe(process.stdout)
-  .on('error', function (error) {
-    throw error;
+var filtered = routes.filter(function(route) {
+  return ((include.length == 0 && exclude.length == 0)
+      || (include.length > 0 && include.indexOf(route.path) > -1)
+      || (exclude.length >   0 && exclude.indexOf(route.path) === -1));
+});
+
+if (filtered.length == 0) {
+  console.log("Error: No routes to build.");
+  process.exit(1);
+}
+
+if (argv.stdout && filtered.length !== 1) {
+  console.log("Error: The --stdout option can only be used for a single route. The -r option specifies the route to build");
+  process.exit(1);
+}
+
+if (argv.stdout) {
+  getFactoryStream(filtered[0], function(err, value) {
+    if (err) {
+      throw err;
+    }
+    value.pipe(process.stdout)
+      .on('error', function (error) {
+        throw error;
+      });
   });
+}
+else {
+  build(filtered, targetDir)
+    .pipe(stat())
+    .pipe(prettify())
+    .pipe(process.stdout)
+    .on('error', function (error) {
+      throw error;
+    });
+}
 
 function stat() {
   return through.obj(function (route, enc, cb) {

@@ -4,7 +4,8 @@ var path = require("path");
 var fs = require("fs");
 var es = require("event-stream");
 var through = require("through2");
-var getValueFromFactory = require("./lib/getFactoryStream");
+var xtend = require("xtend");
+var getFactoryStream = require("./lib/getFactoryStream");
 
 var TEMPFILE_SUFFIX = '.staticr-tmp';
 
@@ -20,15 +21,13 @@ function build(routes, targetDir) {
 }
 
 function prepareRoutes(routes, targetDir) {
-  return Object.keys(routes).map(function(route) {
-    var target = path.join(targetDir, resolveTarget(route));
+  return routes.map(function(route) {
+    var target = path.join(targetDir, resolveTarget(route.path));
     var tmpfile = target + TEMPFILE_SUFFIX;
-    return {
-      route: path.join('/', route),
+    return xtend(route, {
       target: target,
-      tmpfile: tmpfile,
-      factory: routes[route]
-    }
+      tmpfile: tmpfile
+    });
   });
 }
 
@@ -44,7 +43,7 @@ function ensurePaths() {
 function writeToTempfile() {
   return through.obj(function(route, enc, cb) {
     var self = this;
-    getValueFromFactory(route, function(err, stream) {
+    getFactoryStream(route, function(err, stream) {
       if (err) {
         return cb(err);
       }

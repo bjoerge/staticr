@@ -1,4 +1,5 @@
 var proxyquire = require("proxyquire");
+var createRoutes = require("../lib/createRoutes");
 var test = require("tap").test;
 var str = require("string-to-stream");
 var through = require("through2");
@@ -90,7 +91,7 @@ test("build pipeline", function (t) {
     }
   });
 
-  var routes = {
+  var routes = createRoutes({
     '/foo.js': function () {
       return str("foo")
     },
@@ -100,7 +101,7 @@ test("build pipeline", function (t) {
     '/a-directory': function () {
       return str("this is the index")
     }
-  };
+  });
 
   build(routes, './build').on('end', function() { 
       t.end();
