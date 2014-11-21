@@ -92,14 +92,15 @@ Usage: staticr [options] <target dir> <route files ...>
 
   Options:
 
-      --route, -r <route> Route(s) to include in build. If left out, all the 
-                          defined routes will be included.
+    --route, -r <route> Route(s) to include in build. If left out, all the 
+                        defined routes will be included.
 
-    --exclude, -e <route> Route(s) to exclude from the build. If left out, all the
-                          defined routes will be included.
+  --exclude, -e <route> Route(s) to exclude from the build. If left out, all
+                        the defined routes will be included.
 
-             --stdout, -s Pipe a route to stdout instead of writing to a target folder.
-                          This option only works for a single route specified with the --route parameter.
+           --stdout, -s Pipe a route to stdout instead of writing to a target
+                        folder. This option only works for a single route
+                        specified with the --route parameter.
 ```
 
 ### Example: Development vs. production
