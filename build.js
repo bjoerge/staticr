@@ -64,7 +64,7 @@ function atomicRename() {
       fs.rename(route.tmpfile, route.target, function (err) {
         pending--;
         if (err) {
-          return self.emit('error')
+          return self.emit('error', err)
         }
         self.push(route);
         if (pending === 0) {
