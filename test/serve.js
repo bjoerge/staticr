@@ -17,7 +17,7 @@ test("serving bundles as express middleware", function (t) {
       }
     };
 
-    var middleware = serve.js(routes);
+    var middleware = serve(routes);
 
     [
       ['/foo.js', 'foo'],
