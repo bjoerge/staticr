@@ -1,4 +1,3 @@
-var path = require("path");
 var getFactoryStream = require("./lib/getFactoryStream");
 var createRoutes = require("./lib/createRoutes");
 
