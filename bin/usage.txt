@@ -5,6 +5,8 @@ Usage: staticr [options] <target dir> <route files ...>
       --route, -r <route> Route(s) to include in build. If left out, all the 
                           defined routes will be included.
 
+     --require, -m <name> Require the given module
+
     --exclude, -e <route> Route(s) to exclude from the build. If left out, all the
                           defined routes will be included.
 

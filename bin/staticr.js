@@ -16,6 +16,7 @@ var argv = minimist(process.argv.slice(2), {
   alias: {
     h: 'help',
     r: 'route',
+    m: 'require',
     e: 'exclude',
     s: 'stdout'
   }
@@ -29,6 +30,15 @@ if (argv.help) {
   showHelp();
   process.exit(0)
 }
+
+const cwd = process.cwd();
+module.paths.push(cwd, path.join(cwd, 'node_modules'));
+[].concat(argv.require || []).map(function(mod) {
+  if (fs.existsSync(mod) || fs.existsSync(mod+'.js')) {
+    return path.resolve(mod);
+  }
+  return mod;
+}).forEach(require);
 
 if (!argv.stdout && argv._.length < 2) {
   console.log("Error: Please specify either --stdout or a target folder. See staticr --help for more information.");
