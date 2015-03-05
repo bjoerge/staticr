@@ -1,7 +1,7 @@
 var getFactoryStream = require("./lib/getFactoryStream");
 var createRoutes = require("./lib/createRoutes");
 
-var getMimeType = require('simple-mime')('text/plain');
+var getMimeType = require('simple-mime')('text/html');
 
 module.exports = function serve(routes) {
 
