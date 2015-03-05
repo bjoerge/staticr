@@ -1,6 +1,6 @@
 # staticr [![Build Status](https://secure.travis-ci.org/bjoerge/staticr.png)](http://travis-ci.org/bjoerge/staticr)
 
-staticr allows you to define a set of routes that can be either served dynamically by express (e.g. during development) or built to static files on disk (e.g. before starting in production)
+staticr allows you to define a set of routes that can be either served dynamically by express (e.g. during development) or built to static files on disk (e.g. before starting in production).
 
 See the [example](https://github.com/bjoerge/staticr/tree/master/example) directory for a complete, working example project.
 
@@ -24,7 +24,7 @@ Now you can serve this bundle using express:
 
 ```js
 var serve = require("staticr/serve");
-app.use(serve.js(require("./browserify.js"));
+app.use(serve(require("./browserify.js"));
 ```
 
 ... or you can compile it to a `./public` folder from the command line like this.
@@ -38,7 +38,7 @@ The content of the stream returned from the static route function above is now w
 ## What's so great about this?
 
 - It allows you to operate with a flexible set of static routes that can be used in different contexts and environments. 
-You define how the static resource should be generated depending on environment in one central place.
+You have one central place to define how the static route should be generated depending on environment.
 
 - You don't have to rely on another layer of indirection between your app and the tools that actually compiles the static resources.
   No more wrappers like `grunt-*`, `gulp-*` or `*-middleware` - you just use the `browserify`, `node-sass`, `less`
@@ -118,7 +118,6 @@ var routes = module.exports = {
     var bundle = browserify("./js/entry.js", {
         debug: process.env.NODE_ENV === 'development'
       })
-      .transform('envify')
       .bundle();
 
     if (process.env.NODE_ENV === 'production') {
@@ -166,9 +165,9 @@ var app = express();
 
 if (process.env.NODE_ENV === 'development') {
   var serve = require("staticr/serve");
-  app.use(serve.css(require("./static-routes/sass-bundles")));
-  app.use(serve.html(require("./static-routes/html-routes")));
-  app.use(serve.js(require("./static-routes/browserify-bundles")));
+  app.use(serve(require("./static-routes/sass-bundles")));
+  app.use(serve(require("./static-routes/html-routes")));
+  app.use(serve(require("./static-routes/browserify-bundles")));
 }
 
 ```
