@@ -1,7 +1,6 @@
 var getFactoryStream = require("./lib/getFactoryStream");
 var createRoutes = require("./lib/createRoutes");
-
-var getMimeType = require('simple-mime')('text/html');
+var mime = require("mime");
 
 module.exports = function serve(routes) {
 
@@ -21,7 +20,7 @@ module.exports = function serve(routes) {
 
     getFactoryStream(found, function (err, stream) {
 
-      res.type(getMimeType(found.path));
+      res.type(mime.lookup(found.path));
 
       if (err) {
         return next(err);

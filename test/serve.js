@@ -42,7 +42,50 @@ test("serving bundles as express middleware", function (t) {
           var mockRequest = {path: path};
           middleware(mockRequest, mockResponse, function () {
             // Will abort early and fail planned number
-            t.fail("Expected "+path+" to return "+expectedResponse);
+            t.fail("Expected " + path + " to return " + expectedResponse);
+            t.end();
+          });
+        });
+      });
+  });
+  t.test('mime types', function (t) {
+    var routes = {
+      '/foo.js': function () {
+        return ''
+      },
+      '/bar.html': function () {
+        return ''
+      },
+      '/bar/baz.woff': function () {
+        return ''
+      }
+    };
+
+    var middleware = serve(routes);
+
+    var expectations = {
+      '/foo.js': 'application/javascript',
+      '/bar.html': 'text/html',
+      '/bar/baz.woff': 'application/font-woff'
+    };
+
+    Object.keys(expectations)
+      .forEach(function (path) {
+        var mime = expectations[path];
+        t.test('fetching ' + path, function (t) {
+          t.plan(1);
+
+          var mockResponse = concat(function (response) {});
+
+          mockResponse.type = function (type) {
+            t.equal(type, mime);
+            t.end();
+          };
+
+          var mockRequest = {path: path};
+          middleware(mockRequest, mockResponse, function (err) {
+            // Will abort early and fail planned number
+            t.fail(err);
             t.end();
           });
         });
