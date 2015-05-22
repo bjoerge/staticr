@@ -16,9 +16,18 @@ var argv = minimist(process.argv.slice(2), {
   alias: {
     h: 'help',
     r: 'route',
+    o: 'out-dir',
+    s: 'stdout',
     m: 'require',
-    e: 'exclude',
-    s: 'stdout'
+    e: 'exclude'
+  },
+  unknown: function(opt) {
+    if (opt.substring(0,2) === '--') {
+      console.log("Error: Unknown option: "+opt);
+      console.log();
+      showHelp();
+      process.exit(1);
+    }
   }
 });
 
@@ -40,19 +49,19 @@ module.paths.push(cwd, path.join(cwd, 'node_modules'));
   return mod;
 }).forEach(require);
 
-if (!argv.stdout && argv._.length < 2) {
-  console.log("Error: Please specify either --stdout or a target folder. See staticr --help for more information.");
+var outDir = argv['out-dir'];
+if (!argv.stdout && !outDir) {
+  console.log("Error: Please specify either --stdout or a output directory with --out-dir. See staticr --help for more information.");
   process.exit(1)
 }
 
-var targetDir = argv._[0];
-var routeFiles = argv.stdout ? argv._.slice(0) : argv._.slice(1);
+var routeFiles = argv._.slice(0);
 
 var include = [].concat(argv.route || []).map(normalizePath);
 var exclude = [].concat(argv.exclude || []).map(normalizePath);
 
 if (include.length > 0 && exclude.length > 0 ) {
-  console.log("Error: The --route and --exclude options are mutually exclusive.");
+  console.log("Error: The --route and --exclude cannot be used together..");
   process.exit(1);
 }
 
@@ -69,12 +78,12 @@ var filtered = routes.filter(function(route) {
 });
 
 if (filtered.length == 0) {
-  console.log("Error: No routes to build.");
+  console.log("Error: No routes to build. Specify with `staticr <route file(s) ...>`");
   process.exit(1);
 }
 
 if (argv.stdout && filtered.length !== 1) {
-  console.log("Error: The --stdout option can only be used for a single route. The -r option specifies the route to build");
+  console.log("Error: The --stdout option can only be used for a single route. Specify a route with the --route option.");
   process.exit(1);
 }
 
@@ -90,7 +99,7 @@ if (argv.stdout) {
   });
 }
 else {
-  build(filtered, targetDir)
+  build(filtered, outDir)
     .pipe(stat())
     .pipe(prettify())
     .pipe(process.stdout)

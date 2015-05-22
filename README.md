@@ -1,6 +1,6 @@
 # staticr [![Build Status](https://secure.travis-ci.org/bjoerge/staticr.png)](http://travis-ci.org/bjoerge/staticr)
 
-staticr allows you to define a set of routes that can be either served dynamically by express (e.g. during development) or built to static files on disk (e.g. before starting in production).
+staticr allows you to define a set of routes that can be either served dynamically by express (e.g. during development) or built to static files on disk (e.g. in a deploy task).
 
 See the [example](https://github.com/bjoerge/staticr/tree/master/example) directory for a complete, working example project.
 
@@ -88,19 +88,23 @@ Note: Any value returned from a route function that expects arguments are ignore
 ### Command line API
 
 ```
-Usage: staticr [options] <target dir> <route files ...>
+Usage: staticr [options] <route file(s) ...>
 
   Options:
 
-    --route, -r <route> Route(s) to include in build. If left out, all the 
-                        defined routes will be included.
+      --out-dir, -o <dir> Build all routes defined in route file(s) and output it to the specified
+                          directory.
 
-  --exclude, -e <route> Route(s) to exclude from the build. If left out, all
-                        the defined routes will be included.
+      --route, -r <route> Route(s) to include in build. If left out, all the
+                          defined routes will be included.
 
-           --stdout, -s Pipe a route to stdout instead of writing to a target
-                        folder. This option only works for a single route
-                        specified with the --route parameter.
+             --stdout, -s Pipe a route to stdout instead of writing to output dir folder.
+                          This option only works for single routes specified with the --route parameter.
+
+     --require, -m <name> Require the given module
+
+    --exclude, -e <route> Route(s) to exclude from the build. By default, all the
+                          defined routes will be included.
 ```
 
 ### Example: Development vs. production

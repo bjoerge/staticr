@@ -1,14 +1,17 @@
-Usage: staticr [options] <target dir> <route files ...>
+Usage: staticr [options] <route file(s) ...>
 
   Options:
 
-      --route, -r <route> Route(s) to include in build. If left out, all the 
+      --out-dir, -o <dir> Build all routes defined in route file(s) and output it to the specified
+                          directory.
+
+      --route, -r <route> Route(s) to include in build. If left out, all the
                           defined routes will be included.
+
+             --stdout, -s Pipe a route to stdout instead of writing to output dir folder.
+                          This option only works for single routes specified with the --route parameter.
 
      --require, -m <name> Require the given module
 
-    --exclude, -e <route> Route(s) to exclude from the build. If left out, all the
+    --exclude, -e <route> Route(s) to exclude from the build. By default, all the
                           defined routes will be included.
-
-             --stdout, -s Pipe a route to stdout instead of writing to a target folder.
-                          This option only works for single routes specified with the --route parameter.
