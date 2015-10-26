@@ -11,7 +11,7 @@ Usage: staticr [options] <route file(s) ...>
              --stdout, -s Pipe a route to stdout instead of writing to output dir folder.
                           This option only works for single routes specified with the --route parameter.
 
-     --require, -m <name> Require the given module
+     --require, -m <name> Require the given module. Useful for installing require hooks, e.g babel/register
 
     --exclude, -e <route> Route(s) to exclude from the build. By default, all the
                           defined routes will be included.
