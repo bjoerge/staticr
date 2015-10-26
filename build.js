@@ -5,6 +5,7 @@ var fs = require("fs");
 var es = require("event-stream");
 var through = require("through2");
 var xtend = require("xtend");
+var combine = require("stream-combiner");
 var getFactoryStream = require("./lib/getFactoryStream");
 
 var TEMPFILE_SUFFIX = '.staticr-tmp';
@@ -12,12 +13,13 @@ var TEMPFILE_SUFFIX = '.staticr-tmp';
 module.exports = build;
 
 function build(routes, targetDir) {
-  return es
-    .readArray(prepareRoutes(routes, targetDir))
-    .pipe(ensurePaths())
-    .pipe(writeToTempfile())
-    .pipe(waitForAll())
-    .pipe(atomicRename())
+  return combine(
+    es.readArray(prepareRoutes(routes, targetDir)),
+    ensurePaths(),
+    writeToTempfile(),
+    waitForAll(),
+    atomicRename()
+  )
 }
 
 function prepareRoutes(routes, targetDir) {
@@ -33,10 +35,12 @@ function prepareRoutes(routes, targetDir) {
 
 function ensurePaths() {
   return through.obj(function(route, enc, cb) {
-    mkdirp(path.dirname(route.target), function() {
-      this.push(route);
-      cb();
-    }.bind(this));
+    mkdirp(path.dirname(route.target), function(err) {
+      if (err) {
+        return cb(err)
+      }
+      cb(null, route);
+    });
   });
 }
 
@@ -58,22 +62,24 @@ function writeToTempfile() {
 
 function atomicRename() {
   return through.obj(function(routes, enc, cb) {
-    var self = this;
     var pending = routes.length;
+    var errored = false
     routes.forEach(function(route) {
       fs.rename(route.tmpfile, route.target, function (err) {
-        pending--;
+        if (errored) {
+          return // avoid multiple calls to callback
+        }
+        pending--
         if (err) {
-          return self.emit('error', err)
+          errored = true
+          return cb(err)
         }
-        self.push(route);
+        this.push(route);
         if (pending === 0) {
-          cb();
+          cb(null, route);
         }
-      });
-    });
-  }, function() {
-    this.emit('end');
+      }.bind(this));
+    }.bind(this));
   });
 }
 

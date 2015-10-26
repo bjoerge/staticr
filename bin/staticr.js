@@ -9,6 +9,7 @@ var xtend = require("xtend");
 var clc = require("cli-color");
 var minimist = require("minimist");
 var getFactoryStream = require("../lib/getFactoryStream");
+var combine = require("stream-combiner");
 var createRoutes = require("../lib/createRoutes");
 var normalizePath = require("../lib/normalizePath");
 
@@ -88,51 +89,52 @@ if (argv.stdout && filtered.length !== 1) {
 }
 
 if (argv.stdout) {
-  getFactoryStream(filtered[0], function(err, value) {
+  getFactoryStream(filtered[0], function(err, stream) {
     if (err) {
       throw err;
     }
-    value.pipe(process.stdout)
+    stream
+      .pipe(process.stdout)
       .on('error', function (error) {
         throw error;
       });
   });
 }
 else {
-  build(filtered, outDir)
-    .pipe(stat())
-    .pipe(prettify())
-    .pipe(process.stdout)
-    .on('error', function (error) {
-      throw error;
-    });
+  const pipeline = combine(
+    build(filtered, outDir),
+    stat(),
+    prettify()
+  )
+  pipeline.on('error', function (error) {
+    throw error; // build error
+  });
+  pipeline.pipe(process.stdout)
 }
 
 function stat() {
   return through.obj(function (route, enc, cb) {
     fs.stat(route.target, function(err, stat) {
       if (err) {
-        return this.emit(err);
+        return cb(err);
       }
-      this.push({
+      cb(null, {
         stat: stat,
         route: route
       });
-      cb();
-    }.bind(this));
+    });
   })
 }
 
 function prettify() {
   return through.obj(function (result, enc, cb) {
-    this.push([
+    cb(null, [
       clc.green(" ✓ "),
       "Done building static route ",
       clc.whiteBright(result.route.route),
       " to ",
       clc.whiteBright(result.route.target),
       " ("+filesize(result.stat.size)+")\n"
-    ].join("")); 
-    cb();
+    ].join(""));
   });
 }
