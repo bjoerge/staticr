@@ -30,7 +30,7 @@ app.use(serve(require("./browserify.js"));
 ... or you can compile it to a `./public` folder from the command line like this.
 
 ```js
-staticr ./public ./browserify.js
+staticr --out-dir ./public ./browserify.js
 ```
 
 The content of the stream returned from the static route function above is now written to `./public/js/main.js`
