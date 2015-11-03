@@ -181,7 +181,7 @@ if (process.env.NODE_ENV === 'development') {
 Routes will be generated once and written to target directory. This can be done right before server startup.
 
 ```sh
-NODE_ENV=production staticr ./public \
+NODE_ENV=production staticr --out-dir ./public \
  ./static-routes/sass-bundles.js \
  ./static-routes/html-routes \
  ./static-routes/browserify-bundles.js
