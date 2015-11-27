@@ -131,9 +131,9 @@ function prettify() {
     cb(null, [
       clc.green(" ✓ "),
       "Done building static route ",
-      clc.whiteBright(result.route.route),
+      clc.whiteBright(result.route.path),
       " to ",
-      clc.whiteBright(result.route.target),
+      clc.whiteBright(outDir),
       " ("+filesize(result.stat.size)+")\n"
     ].join(""));
   });
