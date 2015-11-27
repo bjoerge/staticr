@@ -10,6 +10,7 @@ var clc = require("cli-color");
 var minimist = require("minimist");
 var getFactoryStream = require("../lib/getFactoryStream");
 var combine = require("stream-combiner");
+var interopRequire = require("interop-require");
 var createRoutes = require("../lib/createRoutes");
 var normalizePath = require("../lib/normalizePath");
 
@@ -67,7 +68,7 @@ if (include.length > 0 && exclude.length > 0 ) {
 }
 
 var routesMap = xtend.apply(xtend, routeFiles.map(function(file) {
-  return require(path.join(process.cwd(), file))
+  return interopRequire(path.join(process.cwd(), file))
 }));
 
 var routes = createRoutes(routesMap);
