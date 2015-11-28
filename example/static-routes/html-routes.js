@@ -1,7 +1,7 @@
 var jade = require('jade');
 
 // This bundle will be minified in production.
-var routes = module.exports = {
+module.exports = {
   "/": function() {
     return jade.renderFile("./views/index.jade", {env: process.env.NODE_ENV});
   },

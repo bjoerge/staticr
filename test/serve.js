@@ -49,6 +49,12 @@ test("serving bundles as express middleware", function (t) {
 
   t.test('mime types', function (t) {
     var routes = {
+      '/': function () {
+        return ''
+      },
+      '/foo': function () {
+        return ''
+      },
       '/foo.js': function () {
         return ''
       },
@@ -63,6 +69,8 @@ test("serving bundles as express middleware", function (t) {
     var middleware = serve(routes);
 
     var expectations = [
+      ['/', 'text/html'],
+      ['/foo', 'text/html'],
       ['/foo.js', 'application/javascript'],
       ['/bar.html', 'text/html'],
       ['/bar/baz.woff', 'application/font-woff']

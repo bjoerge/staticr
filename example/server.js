@@ -5,9 +5,7 @@ var app = express();
 
 if (process.env.NODE_ENV === 'development') {
   var serve = require("../serve");
-  app.use(serve.css(require("./static-routes/sass-bundles")));
-  app.use(serve.html(require("./static-routes/html-routes")));
-  app.use(serve.js(require("./static-routes/browserify-bundles")));
+  app.use(serve(require("./static-routes")));
 }
 
 app.use(express.static(path.join(__dirname, 'public')));

@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.1.1
+* Update examples and make text/html default mime type for extension-less routes, (e.g. `/foo`) as these will be compiled to `<route>/index.html` (e.g. `/foo/index.html`) 
+
 ## 3.1.0
 * Use interop-require for babel6 compat.
 * Minor logging improvement
