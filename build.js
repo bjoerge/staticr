@@ -46,17 +46,11 @@ function ensurePaths() {
 
 function writeToTempfile() {
   return through.obj(function(route, enc, cb) {
-    var self = this;
-    getFactoryStream(route, function(err, stream) {
-      if (err) {
-        return cb(err);
-      }
-      stream
-        .pipe(fs.createWriteStream(route.tmpfile))
-        .on('error', self.emit.bind(self, 'error'))
-        .on('close', self.push.bind(self, route))
-        .on('close', cb);
-    });
+    getFactoryStream(route)
+      .pipe(fs.createWriteStream(route.tmpfile))
+      .on('error', this.emit.bind(this, 'error'))
+      .on('close', this.push.bind(this, route))
+      .on('close', cb);
   })
 }
 

@@ -42,7 +42,7 @@ if (argv.help) {
   process.exit(0)
 }
 
-const cwd = process.cwd();
+var cwd = process.cwd();
 module.paths.push(cwd, path.join(cwd, 'node_modules'));
 [].concat(argv.require || []).map(function(mod) {
   if (fs.existsSync(mod) || fs.existsSync(mod+'.js')) {
@@ -90,27 +90,22 @@ if (argv.stdout && filtered.length !== 1) {
 }
 
 if (argv.stdout) {
-  getFactoryStream(filtered[0], function(err, stream) {
-    if (err) {
-      throw err;
-    }
-    stream
-      .pipe(process.stdout)
-      .on('error', function (error) {
-        throw error;
-      });
-  });
+  getFactoryStream(filtered[0])
+    .pipe(process.stdout)
+    .on('error', function (error) {
+      throw error;
+    });
 }
 else {
-  const pipeline = combine(
+  combine(
     build(filtered, outDir),
     stat(),
     prettify()
   )
-  pipeline.on('error', function (error) {
+  .on('error', function (error) {
     throw error; // build error
-  });
-  pipeline.pipe(process.stdout)
+  })
+  .pipe(process.stdout)
 }
 
 function stat() {

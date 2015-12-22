@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "node ./server.js",
-    "build": "../bin/staticr.js ./public ./static-routes"
+    "build": "../bin/staticr.js --out-dir ./public ./static-routes"
   },
   "author": "Bjørge Næss <bjoerge@gmail.com>",
   "license": "MIT"
