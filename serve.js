@@ -19,18 +19,10 @@ module.exports = function serve(routes) {
       return next();
     }
 
-    getFactoryStream(found, function (err, stream) {
-
-      var mimetype = path.extname(found.path) ? mime.lookup(found.path) : 'text/html';
-
-      res.type(mimetype);
-
-      if (err) {
-        return next(err);
-      }
-      stream
-          .on('error', next)
-          .pipe(res);
-    });
+    var mimetype = path.extname(found.path) ? mime.lookup(found.path) : 'text/html';
+    res.type(mimetype);
+    getFactoryStream(found)
+      .on('error', next)
+      .pipe(res);
   }
 };

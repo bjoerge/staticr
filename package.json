@@ -23,16 +23,16 @@
   },
   "devDependencies": {
     "concat-stream": "^1.0.0",
+    "mocha": "^2.3.4",
     "native-promise-only": "^0.8.1",
-    "proxyquire": "^1.0.1",
-    "tap": "^2.2.0"
+    "proxyquire": "^1.7.3"
   },
   "repository": {
     "type": "git",
     "url": "http://github.com/bjoerge/staticr.git"
   },
   "scripts": {
-    "test": "tap test"
+    "test": "mocha test"
   },
   "author": "Bjørge Næss <bjoerge@gmail.com>",
   "license": "MIT"

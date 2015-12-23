@@ -1,12 +1,10 @@
-var test = require("tap").test;
 var concat = require("concat-stream");
-var str = require("string-to-stream");
 var serve = require("../serve");
+var assert = require("assert");
 
-test("serving bundles as express middleware", function (t) {
-  t.plan(2)
+describe("Serving bundles as express middleware", function () {
 
-  t.test('serving js files', function (t) {
+  describe('serving js files', function () {
     var routes = {
       '/foo.js': function () {
         return "foo"
@@ -18,36 +16,44 @@ test("serving bundles as express middleware", function (t) {
 
     var middleware = serve(routes);
 
-    const expectations = [
+    var expectations = [
       ['/foo.js', 'foo'],
       ['/bar/baz.js', 'bar baz']
     ];
 
-    t.plan(expectations.length)
     expectations.forEach(function (row) {
       var path = row[0];
       var expectedResponse = row[1];
 
-      t.test('fetching ' + path, function (t) {
+      describe('fetching ' + path, function () {
+        var actualResponse
+        var actualType
+        before(function(done) {
+          var mockResponse = concat(function (response) {
+            actualResponse = response
+          });
+          mockResponse.type = function (type) {
+            actualType = type
+          };
 
-        t.plan(2)
-        var mockResponse = concat(function (response) {
-          t.equal(response.toString(), expectedResponse);
-        });
+          var mockRequest = {path: path};
+          middleware(mockRequest, mockResponse, function error() {
+            assert.fail("Expected " + path + " to return " + expectedResponse);
+          });
 
-        mockResponse.type = function (type) {
-          t.equal('application/javascript', type);
-        };
-
-        var mockRequest = {path: path};
-        middleware(mockRequest, mockResponse, function () {
-          t.fail("Expected " + path + " to return " + expectedResponse);
-        });
+          mockResponse.on('finish', done)
+        })
+        it('writes the expected response', function() {
+          assert.equal(expectedResponse, actualResponse.toString());
+        })
+        it('sets the expected content type', function() {
+          assert.equal(actualType, 'application/javascript');
+        })
       });
     });
   });
 
-  t.test('mime types', function (t) {
+  describe('mime types', function () {
     var routes = {
       '/': function () {
         return ''
@@ -76,27 +82,21 @@ test("serving bundles as express middleware", function (t) {
       ['/bar/baz.woff', 'application/font-woff']
     ];
 
-    t.plan(expectations.length)
-
     expectations
       .forEach(function (expectation) {
         var path = expectation[0];
         var mime = expectation[1];
 
-        t.test('fetching ' + path, function (t) {
+        it('responds with '+ mime + ' for path ' + path, function (done) {
 
-          t.plan(1)
-          var mockResponse = concat(function () {});
+          var mockResponse = concat(function() { done() });
 
           mockResponse.type = function (type) {
-            t.equal(type, mime);
+            assert.equal(type, mime);
           };
 
           var mockRequest = {path: path};
-          middleware(mockRequest, mockResponse, function (err) {
-            // Will abort early and fail planned number
-            t.fail(err);
-          });
+          middleware(mockRequest, mockResponse, assert.fail);
         });
       });
   });

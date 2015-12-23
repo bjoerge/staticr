@@ -46,16 +46,20 @@ function ensurePaths() {
 
 function writeToTempfile() {
   return through.obj(function(route, enc, cb) {
-    getFactoryStream(route)
-      .pipe(fs.createWriteStream(route.tmpfile))
-      .on('error', this.emit.bind(this, 'error'))
-      .on('close', this.push.bind(this, route))
-      .on('close', cb);
+    var factoryStream = getFactoryStream(route)
+    var writeStream = fs.createWriteStream(route.tmpfile)
+    factoryStream.on('error', cb)
+    writeStream.on('error', cb)
+    writeStream.on('finish', function() {
+      cb(null, route)
+    })
+    factoryStream.pipe(writeStream)
   })
 }
 
 function atomicRename() {
   return through.obj(function(routes, enc, cb) {
+
     var pending = routes.length;
     var errored = false
     routes.forEach(function(route) {
