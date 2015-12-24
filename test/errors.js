@@ -1,10 +1,10 @@
-require("native-promise-only")
-var proxyquire = require("proxyquire");
-var createRoutes = require("../lib/createRoutes");
-var path = require("path");
-var Readable = require("stream").Readable;
-var assert = require("assert");
-var concat = require("concat-stream");
+/* global it, describe */
+
+require('native-promise-only')
+var proxyquire = require('proxyquire')
+var Readable = require('stream').Readable
+var assert = require('assert')
+var concat = require('concat-stream')
 
 var outDir = './build'
 
@@ -22,7 +22,7 @@ var specs = [
     path: '/stream.js',
     factory: function () {
       var stream = new Readable()
-      stream._read = function () {  }
+      stream._read = function () {}
 
       stream.push('foo')
       setTimeout(function () {
@@ -57,7 +57,7 @@ var specs = [
   }
 ]
 
-var build = proxyquire("../build", {
+var build = proxyquire('../build', {
   mkdirp: function (path, callback) {
     process.nextTick(callback)
   },
@@ -84,5 +84,4 @@ describe('Error handling', function () {
         })
     })
   })
-
 })

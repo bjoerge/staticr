@@ -1,9 +1,8 @@
-var sass = require('node-sass');
-
+var sass = require('node-sass')
 
 // This bundle will be minified in production.
-var routes = module.exports = {
-  "/css/main.css": function(callback) {
+module.exports = {
+  '/css/main.css': function (callback) {
     var options = {
       file: require.resolve('../stylesheets/main.scss'),
       omitSourceMapUrl: true,
@@ -16,4 +15,4 @@ var routes = module.exports = {
       callback(null, result.css)
     })
   }
-};
+}

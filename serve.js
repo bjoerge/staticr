@@ -1,28 +1,28 @@
-var getFactoryStream = require("./lib/getFactoryStream");
-var createRoutes = require("./lib/createRoutes");
-var mime = require("mime");
-var path = require("path");
+var getFactoryStream = require('./lib/getFactoryStream')
+var createRoutes = require('./lib/createRoutes')
+var mime = require('mime')
+var path = require('path')
 
-module.exports = function serve(routes) {
+module.exports = function serve (routes) {
+  routes = createRoutes(routes)
 
-  routes = createRoutes(routes);
-
-  return function serve(req, res, next) {
-    var found = null;
+  return function serve (req, res, next) {
+    var found = null
     routes.some(function (route) {
-      if (req.path == route.path) {
-        return found = route;
+      if (req.path === route.path) {
+        found = route
+        return true
       }
-    });
+    })
 
     if (!found) {
-      return next();
+      return next()
     }
 
-    var mimetype = path.extname(found.path) ? mime.lookup(found.path) : 'text/html';
-    res.type(mimetype);
+    var mimetype = path.extname(found.path) ? mime.lookup(found.path) : 'text/html'
+    res.type(mimetype)
     getFactoryStream(found)
       .on('error', next)
-      .pipe(res);
+      .pipe(res)
   }
-};
+}

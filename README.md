@@ -1,4 +1,7 @@
-# staticr [![Build Status](https://secure.travis-ci.org/bjoerge/staticr.png)](http://travis-ci.org/bjoerge/staticr)
+# staticr
+
+[![Build Status](https://secure.travis-ci.org/bjoerge/staticr.png)](http://travis-ci.org/bjoerge/staticr)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
 staticr allows you to define a set of routes that can be either served dynamically by express (e.g. during development) or built to static files on disk (e.g. in a deploy task).
 
