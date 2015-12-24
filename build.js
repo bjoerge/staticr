@@ -74,7 +74,7 @@ function atomicRename() {
         }
         this.push(route);
         if (pending === 0) {
-          cb(null, route);
+          cb()
         }
       }.bind(this));
     }.bind(this));
