@@ -5,14 +5,14 @@ var build = require('../build')
 var filesize = require('filesize')
 var through = require('through2')
 var fs = require('fs')
-var xtend = require('xtend')
 var clc = require('cli-color')
 var minimist = require('minimist')
 var getFactoryStream = require('../lib/getFactoryStream')
 var combine = require('stream-combiner')
 var interopRequire = require('interop-require')
-var createRoutes = require('../lib/createRoutes')
+var resolveRoutes = require('../lib/resolveRoutes')
 var normalizePath = require('../lib/normalizePath')
+var combineRoutes = require('../lib/combineRoutes')
 
 var argv = minimist(process.argv.slice(2), {
   alias: {
@@ -68,45 +68,48 @@ if (include.length > 0 && exclude.length > 0) {
   process.exit(1)
 }
 
-var routesMap = xtend.apply(xtend, routeFiles.map(function (file) {
+var routes = combineRoutes.apply(null, routeFiles.map(function (file) {
   return interopRequire(path.join(process.cwd(), file))
 }))
 
-var routes = createRoutes(routesMap)
+resolveRoutes(routes, function (err, routes) {
+  if (err) {
+    throw err
+  }
+  var filtered = routes.filter(function (route) {
+    return ((include.length === 0 && exclude.length === 0) ||
+    (include.length > 0 && include.indexOf(route.path) > -1) ||
+    (exclude.length > 0 && exclude.indexOf(route.path) === -1))
+  })
 
-var filtered = routes.filter(function (route) {
-  return ((include.length === 0 && exclude.length === 0) ||
-  (include.length > 0 && include.indexOf(route.path) > -1) ||
-  (exclude.length > 0 && exclude.indexOf(route.path) === -1))
+  if (filtered.length === 0) {
+    console.log('Error: No routes to build. Specify with `staticr <route file(s) ...>`')
+    process.exit(1)
+  }
+
+  if (argv.stdout && filtered.length !== 1) {
+    console.log('Error: The --stdout option can only be used for a single route. Specify a route with the --route option.')
+    process.exit(1)
+  }
+
+  if (argv.stdout) {
+    getFactoryStream(filtered[0])
+      .pipe(process.stdout)
+      .on('error', function (error) {
+        throw error
+      })
+  } else {
+    combine(
+      build(filtered, outDir),
+      stat(),
+      prettify()
+    )
+      .on('error', function (error) {
+        throw error // build error
+      })
+      .pipe(process.stdout)
+  }
 })
-
-if (filtered.length === 0) {
-  console.log('Error: No routes to build. Specify with `staticr <route file(s) ...>`')
-  process.exit(1)
-}
-
-if (argv.stdout && filtered.length !== 1) {
-  console.log('Error: The --stdout option can only be used for a single route. Specify a route with the --route option.')
-  process.exit(1)
-}
-
-if (argv.stdout) {
-  getFactoryStream(filtered[0])
-    .pipe(process.stdout)
-    .on('error', function (error) {
-      throw error
-    })
-} else {
-  combine(
-    build(filtered, outDir),
-    stat(),
-    prettify()
-  )
-    .on('error', function (error) {
-      throw error // build error
-    })
-    .pipe(process.stdout)
-}
 
 function stat () {
   return through.obj(function (route, enc, cb) {

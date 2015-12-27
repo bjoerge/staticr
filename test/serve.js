@@ -6,14 +6,27 @@ var assert = require('assert')
 
 describe('Serving bundles as express middleware', function () {
   describe('serving js files', function () {
-    var routes = {
-      '/foo.js': function () {
-        return 'foo'
+    var routes = [
+      {
+        '/foo.js': function () {
+          return 'foo'
+        }
       },
-      '/bar/baz.js': function () {
-        return 'bar baz'
+      function (callback) {
+        setTimeout(function () {
+          callback(null, {
+            '/bar.js': function () {
+              return 'bar'
+            }
+          })
+        }, 100)
+      },
+      {
+        '/bar/baz.js': function () {
+          return 'bar baz'
+        }
       }
-    }
+    ]
 
     var middleware = serve(routes)
 
@@ -38,8 +51,8 @@ describe('Serving bundles as express middleware', function () {
           }
 
           var mockRequest = {path: path}
-          middleware(mockRequest, mockResponse, function error () {
-            assert.fail('Expected ' + path + ' to return ' + expectedResponse)
+          middleware(mockRequest, mockResponse, function next () {
+            assert.fail('Expected ' + path + ' to return ' + expectedResponse + ' instead got ' + actualResponse)
           })
 
           mockResponse.on('finish', done)
@@ -86,13 +99,13 @@ describe('Serving bundles as express middleware', function () {
     expectations
       .forEach(function (expectation) {
         var path = expectation[0]
-        var mime = expectation[1]
+        var expectedType = expectation[1]
 
-        it('responds with ' + mime + ' for path ' + path, function (done) {
+        it('responds with ' + expectedType + ' for path ' + path, function (done) {
           var mockResponse = concat(function () { done() })
 
-          mockResponse.type = function (type) {
-            assert.equal(type, mime)
+          mockResponse.type = function (actualType) {
+            assert.equal(actualType, expectedType)
           }
 
           var mockRequest = {path: path}

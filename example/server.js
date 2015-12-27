@@ -5,7 +5,14 @@ var app = express()
 
 if (process.env.NODE_ENV === 'development') {
   var serve = require('../serve')
-  app.use(serve(require('./static-routes')))
+  app.use(serve(
+    require('./static-routes/browserify-bundles'),
+    require('./static-routes/simple-async'),
+    require('./static-routes/simple-async-promise'),
+    require('./static-routes/html-routes'),
+    require('./static-routes/webpack-bundles'),
+    require('./static-routes/sass-bundles')
+  ))
 }
 
 app.use(express.static(path.join(__dirname, 'public')))

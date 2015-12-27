@@ -3,8 +3,8 @@ var uglify = require('uglify-stream')
 
 // This bundle will be uglified in production.
 var routes = module.exports = {
-  'js/bundle.js': function () {
-    var bundle = browserify('./js/entry.js', {
+  'js/browserify-bundle.js': function () {
+    var bundle = browserify('./bundles/browserify/entry.js', {
       debug: process.env.NODE_ENV === 'development'
     })
       .transform('envify')
@@ -20,6 +20,6 @@ var routes = module.exports = {
 // Dev only route
 if (process.env.NODE_ENV === 'development') {
   routes['js/dev.js'] = function () {
-    return browserify('./js/dev.js', {debug: true}).bundle()
+    return browserify('./bundles/browserify/dev.js', {debug: true}).bundle()
   }
 }
