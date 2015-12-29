@@ -2,30 +2,6 @@
 
 ## 4.0.0
 
-### Async route resolution
-
-Instead of a {route => factoryFunction} map, a _route resolver_ can now be passed to staticr.
-
-E.g.:
-```js
-module.exports = function resolveRoutes(callback) {
-  setTimeout(function() {
-    callback(null, {
-      '/foo.js': function() {
-        return bundle('../foo.js')
-      }
-    })
-  }, 1000)
-}
-```
-
-This opens the possibility for using bundlers where the actual routes are not known up-front, or where multiple
-static routes are built in a single operation, e.g. with webpack
-
-### Webpack + React with HMR example added.
-
-See https://github.com/bjoerge/staticr/tree/master/examples
-
 ### [POSSIBLE BREAKING]: Removed support for passing streams to callback
 
 In staticr < 4.0 you could pass a stream to the callback given to the factory function like this:
@@ -50,6 +26,34 @@ var routes = {
 ```
 
 This will no longer work in 4.0.0 and if you relied on this bug, you should update your route factory functions
+
+### Async route resolution
+
+Instead of a {route => factoryFunction} map, a _route resolver_ can now be passed to staticr.
+
+E.g.:
+```js
+module.exports = function resolveRoutes(callback) {
+  setTimeout(function() {
+    callback(null, {
+      '/foo.js': function() {
+        return bundle('../foo.js')
+      }
+    })
+  }, 1000)
+}
+```
+
+This opens the possibility for using bundlers where the actual routes are not known up-front, or where multiple
+static routes are built in a single operation, e.g. with webpack
+
+### Webpack + React with HMR example added.
+
+See https://github.com/bjoerge/staticr/tree/master/examples
+
+### Added a `process.staticr` global.
+
+This will have the value `build` if you are in a build task, or `serve` if routes are served.
 
 ### Detect if a route factory never resolves:
 
