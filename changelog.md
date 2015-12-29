@@ -1,7 +1,31 @@
 # Changelog
 
 ## 4.0.0
-* [POSSIBLE BREAKING]: In staticr < 4.0 you could pass a stream to the callback given to the factory function like this:
+
+### Async route resolution
+
+Instead of a {route => factoryFunction} map, a _route resolver_ can now be passed to staticr.
+
+E.g.:
+
+module.exports = function resolveRoutes(callback) {
+  setTimeout(function() {
+    callback(null, {
+      '/foo.js': function() {
+        return bundle('../foo.js')
+      }
+    })
+  }, 1000)
+}
+
+This opens the possibility for using bundlers where the actual routes are not known up-front, or where multiple
+static routes are built in a single operation, e.g. with webpack
+
+### Webpack + React with HMR example added. See https://github.com/bjoerge/staticr/tree/master/examples
+
+### [POSSIBLE BREAKING]: Removed support for passing streams to callback
+
+In staticr < 4.0 you could pass a stream to the callback given to the factory function like this:
 
 ```
 var routes = {
@@ -24,10 +48,10 @@ var routes = {
 
 This will no longer work in 4.0.0 and if you relied on this bug, you should update your route factory functions
 
-* staticr now detects it if a route factory never resolves to a value. Previously this route would just cause the build 
-to exit prematurely in silence with no errors:
-* bugfix: last route were emitted twice
-* Entire test suite is reworked and tap was replaced with mocha.
+### Detect if a route factory never resolves:
+
+Staticr now detects if a route factory never resolves to a value. Previously this route would just cause the build 
+to just exit prematurely in silence, with no errors
 
 ```
 var routes = {
@@ -40,7 +64,8 @@ var routes = {
 Now, instead an unhandled error will be thrown, causing the process to exit with a failure code (!= 0)
 
 ```
-Error: Building static route `/foo.txt` ended prematurely. This is most likely due to a callback never being called in the route factory. Please inspect the function:
+Error: Building static routes ended prematurely. This is most likely due to a promise that never gets resolved 
+in the route factory. Please examine the factory function for route "/foo.txt":
 
 function (callback) {
   // forget to call callback()
@@ -48,17 +73,22 @@ function (callback) {
 ```
 
 This works for Promises that never resolves too!
+ 
+### Bugfix: last route were emitted twice
+### Entire test suite is reworked and tap was replaced with mocha.
 
 ## 3.1.1
-* Update examples and make text/html default mime type for extension-less routes, (e.g. `/foo`) as these will be compiled to `<route>/index.html` (e.g. `/foo/index.html`) 
+### `text/html` is now default mime type for extension-less routes
+
+This also means that the extension-less route `/foo` will be compiled to `foo/index.html` 
 
 ## 3.1.0
-* Use interop-require for babel6 compat.
-* Minor logging improvement
+### Use interop-require for babel 6 compat.
+### Minor logging improvement
 
 ## 3.0.1
-* Readme tweaks
+### Minor readme tweaks
 
 ## 3.0.0
-* [BREAKING] Specify output directory using --out-dir instead of first command line argument
-* Improve error handling and add more tests
+### [BREAKING] Specify output directory using --out-dir instead of first command line argument
+### Improve error handling and add more tests

@@ -1,5 +1,5 @@
 {
-  "name": "staticr-example-project",
+  "name": "staticr-example-project-browserify",
   "version": "0.0.0",
   "description": "Staticr example project",
   "main": "./server.js",
@@ -11,13 +11,11 @@
     "express": "^4.13.3",
     "jade": "^1.11.0",
     "node-sass": "^3.4.2",
-    "uglify-stream": "^1.1.0",
-    "memory-fs": "^0.3.0",
-    "webpack": "^1.12.9"
+    "uglify-stream": "^1.1.0"
   },
   "scripts": {
     "start": "node ./server.js",
-    "build": "../bin/staticr.js --out-dir ./public static-routes/**"
+    "build": "../../bin/staticr.js --out-dir ./public static-routes/**"
   },
   "author": "Bjørge Næss <bjoerge@gmail.com>",
   "license": "MIT"

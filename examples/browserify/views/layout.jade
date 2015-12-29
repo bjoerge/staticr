@@ -2,8 +2,7 @@ doctype html
 html(lang="en")
   head
     title Build static
-    script(type='text/javascript' src="/js/browserify-bundle.js" async defer)
-    script(type='text/javascript' src="/js/webpack-bundle.js" async defer)
+    script(type='text/javascript' src="/js/entry.js" async defer)
     if env == 'development'
       script(type='text/javascript' src="/js/dev.js" async defer)
     link(rel="stylesheet" type='text/javascript' href="/css/main.css")

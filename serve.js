@@ -5,38 +5,9 @@ var mime = require('mime')
 var path = require('path')
 
 module.exports = function serve (/* routes, [routes]... */) {
-  var routedefs = combineRoutes.apply(null, arguments)
-  var routes
-  var pending = false
-  var callbacks = []
-
-  function _resolveRoutes (callback) {
-    if (routes) {
-      process.nextTick(function () {
-        callback(null, routes)
-      })
-      return
-    }
-
-    callbacks.push(callback)
-
-    if (pending) {
-      return
-    }
-
-    pending = true
-
-    resolveRoutes(routedefs, function (err, resolvedRoutes) {
-      routes = resolvedRoutes
-      callbacks.forEach(function (callback) {
-        callback(err, routes)
-      })
-      callbacks = []
-    })
-  }
-
+  var args = arguments
   return function serve (req, res, next) {
-    _resolveRoutes(function (err, routes) {
+    resolveRoutes(combineRoutes.apply(null, args), function (err, routes) {
       if (err) {
         throw err
       }

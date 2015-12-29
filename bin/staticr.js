@@ -14,6 +14,8 @@ var resolveRoutes = require('../lib/resolveRoutes')
 var normalizePath = require('../lib/normalizePath')
 var combineRoutes = require('../lib/combineRoutes')
 
+process.staticr = 'build'
+
 var argv = minimist(process.argv.slice(2), {
   alias: {
     h: 'help',

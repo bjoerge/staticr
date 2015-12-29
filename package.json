@@ -41,5 +41,10 @@
     "build-example": "cd example && npm run build && cd -"
   },
   "author": "Bjørge Næss <bjoerge@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "standard": {
+    "ignore": [
+      "examples"
+    ]
+  }
 }
