@@ -4,6 +4,8 @@ var resolveRoutes = require('./lib/resolveRoutes')
 var mime = require('mime')
 var path = require('path')
 
+process.staticr = 'serve'
+
 module.exports = function serve (/* routes, [routes]... */) {
   var args = arguments
   return function serve (req, res, next) {
