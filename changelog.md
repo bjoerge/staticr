@@ -22,7 +22,9 @@ module.exports = function resolveRoutes(callback) {
 This opens the possibility for using bundlers where the actual routes are not known up-front, or where multiple
 static routes are built in a single operation, e.g. with webpack
 
-### Webpack + React with HMR example added. See https://github.com/bjoerge/staticr/tree/master/examples
+### Webpack + React with HMR example added.
+
+See https://github.com/bjoerge/staticr/tree/master/examples
 
 ### [POSSIBLE BREAKING]: Removed support for passing streams to callback
 
