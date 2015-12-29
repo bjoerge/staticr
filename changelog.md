@@ -7,7 +7,7 @@
 Instead of a {route => factoryFunction} map, a _route resolver_ can now be passed to staticr.
 
 E.g.:
-
+```js
 module.exports = function resolveRoutes(callback) {
   setTimeout(function() {
     callback(null, {
@@ -17,6 +17,7 @@ module.exports = function resolveRoutes(callback) {
     })
   }, 1000)
 }
+```
 
 This opens the possibility for using bundlers where the actual routes are not known up-front, or where multiple
 static routes are built in a single operation, e.g. with webpack
@@ -27,7 +28,7 @@ static routes are built in a single operation, e.g. with webpack
 
 In staticr < 4.0 you could pass a stream to the callback given to the factory function like this:
 
-```
+```js
 var routes = {
   "/foo.js": function(callback) {
     var stream = browserify('./foo.js').bundle()
@@ -37,7 +38,7 @@ var routes = {
 ```
 
 ... or return a promise that resolves to a stream
-```
+```js
 var routes = {
   "/foo.js": function(callback) {
     var stream = browserify('./foo.js').bundle()
@@ -53,7 +54,7 @@ This will no longer work in 4.0.0 and if you relied on this bug, you should upda
 Staticr now detects if a route factory never resolves to a value. Previously this route would just cause the build 
 to just exit prematurely in silence, with no errors
 
-```
+```js
 var routes = {
   "/foo.txt": function(callback) {
     // oops forgot to call callback()
@@ -68,7 +69,7 @@ Error: Building static routes ended prematurely. This is most likely due to a pr
 in the route factory. Please examine the factory function for route "/foo.txt":
 
 function (callback) {
-  // forget to call callback()
+  // oops forgot to call callback()
 }
 ```
 
