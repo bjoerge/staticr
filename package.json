@@ -10,7 +10,7 @@
     "cli-color": "^1.1.0",
     "event-stream": "^3.1.7",
     "filesize": "^3.1.5",
-    "flatten": "0.0.1",
+    "flatten": "1.0.0",
     "interop-require": "^1.0.0",
     "is-promise": "^2.1.0",
     "is-stream": "^1.0.1",
