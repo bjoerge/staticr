@@ -27,7 +27,7 @@
     "mocha": "^2.3.4",
     "native-promise-only": "^0.8.1",
     "proxyquire": "^1.7.3",
-    "snazzy": "^2.0.1",
+    "snazzy": "^3.0.0",
     "standard": "^5.4.1",
     "string-to-stream": "^1.0.0"
   },
