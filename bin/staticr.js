@@ -36,7 +36,7 @@ var argv = minimist(process.argv.slice(2), {
 })
 
 function showHelp () {
-  process.stdout.write(fs.readFileSync(__dirname + '/usage.txt'))
+  process.stdout.write(fs.readFileSync(path.join(__dirname, 'usage.txt')))
 }
 
 if (argv.help) {
