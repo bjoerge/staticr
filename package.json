@@ -28,7 +28,7 @@
     "native-promise-only": "^0.8.1",
     "proxyquire": "^1.7.10",
     "snazzy": "^5.0.0",
-    "standard": "^8.6.0",
+    "standard": "^10.0.2",
     "string-to-stream": "^1.1.0"
   },
   "repository": {
